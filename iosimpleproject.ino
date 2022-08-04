@@ -11,6 +11,8 @@ void task1()
     // Definición de variables static (conservan
     // su valor entre llamadas a task1)
     static uint32_t lasTime = 0;
+    static uint8_t btn2OldState = HIGH;
+    static uint8_t btn3OldState = HIGH;
 
     // Constantes
 
@@ -18,10 +20,10 @@ void task1()
     constexpr uint8_t button1Pin = 12;
     constexpr uint8_t button2Pin = 13;
     constexpr uint8_t button3Pin = 32;
-    constexpr uint8_t ledRed = 14;
+    constexpr uint8_t ledRed = 18;
     constexpr uint8_t ledGreen = 25;
-    constexpr uint8_t ledBlue = 26;
-    constexpr uint8_t ledYellow = 27;
+    constexpr uint8_t ledBlue = 5;
+    constexpr uint8_t ledYellow = 26;
 
     // MÁQUINA de ESTADOS
 
@@ -44,66 +46,68 @@ void task1()
     }
     case Task1States::WAIT_TIMEOUT:
     {
-        uint8_t btn1State = digitalRead(button2Pin);
+
         uint8_t btn2State = digitalRead(button2Pin);
         uint8_t btn3State = digitalRead(button3Pin);
+
         uint32_t currentTime = millis();
 
-        // Evento 1:
-        if ((currentTime - lasTime) >= INTERVAL)
+        if ((btn3State != btn3OldState) || (btn2State != btn2OldState))
         {
-            lasTime = currentTime;
-            printf("btn1: %d,btn2: %d, btn3: %d, btn4: %d\n", btn2State, btn3State);
-        }
 
-        // Evento 2
-        if (btn2State == LOW && btn3State == LOW)
-        {
-            digitalWrite(ledRed, HIGH);
-            digitalWrite(ledBlue, LOW);
-            digitalWrite(ledYellow, LOW);
-            digitalWrite(ledGreen, LOW);
-            Serial.println("Se encendio el LED 14");
-        }
-            
-        // Evento 3
-        if (btn2State == LOW && btn3State == HIGH)
-        {
-            digitalWrite(ledGreen, HIGH);
-            digitalWrite(ledBlue, LOW);
-            digitalWrite(ledRed, LOW);
-            digitalWrite(ledYellow, LOW);
-            Serial.println("Se encendio el LED 25");
-        }
-            
-        // Evento 4
-        if (btn2State == HIGH && btn3State == LOW)
-        {
-            digitalWrite(ledBlue, HIGH);
-            digitalWrite(ledYellow, LOW);
-            digitalWrite(ledRed, LOW);
-            digitalWrite(ledGreen, LOW);
-            Serial.println("Se encendio el LED 26");
-        }
-            
-        // Evento 5
-        if (btn2State == HIGH && btn3State == HIGH)
-        {
-            digitalWrite(ledYellow, HIGH);
-            digitalWrite(ledBlue, LOW);
-            digitalWrite(ledRed, LOW);
-            digitalWrite(ledGreen, LOW);
-            Serial.println("Se encendio el LED 27");
-        }
-            
-        if (btn1State == LOW)
-        {
-            digitalWrite(ledYellow, LOW);
-        }
-            
+            btn3OldState = btn3State;
+            btn2OldState = btn2State;
 
+            // Evento 1:
+            if ((currentTime - lasTime) >= INTERVAL)
+            {
+                lasTime = currentTime;
+                printf("btn2: %d, btn3: %d\n", btn2State, btn3State);
+            }
+
+            // Evento 2
+            if (btn2State == LOW && btn3State == LOW)
+            {
+                digitalWrite(ledRed, HIGH);
+                digitalWrite(ledBlue, LOW);
+                digitalWrite(ledYellow, LOW);
+                digitalWrite(ledGreen, LOW);
+                Serial.println("Se encendio el LED 14");
+            }
+
+            // Evento 3
+            if (btn2State == LOW && btn3State == HIGH)
+            {
+                digitalWrite(ledGreen, HIGH);
+                digitalWrite(ledBlue, LOW);
+                digitalWrite(ledRed, LOW);
+                digitalWrite(ledYellow, LOW);
+                Serial.println("Se encendio el LED 25");
+            }
+
+            // Evento 4
+            if (btn2State == HIGH && btn3State == LOW)
+            {
+                digitalWrite(ledBlue, HIGH);
+                digitalWrite(ledYellow, LOW);
+                digitalWrite(ledRed, LOW);
+                digitalWrite(ledGreen, LOW);
+                Serial.println("Se encendio el LED 26");
+            }
+
+            // Evento 5
+            if (btn2State == HIGH && btn3State == HIGH)
+            {
+                digitalWrite(ledYellow, HIGH);
+                digitalWrite(ledBlue, LOW);
+                digitalWrite(ledRed, LOW);
+                digitalWrite(ledGreen, LOW);
+                Serial.println("Se encendio el LED 27");
+            }
+        }
         break;
     }
+
     default:
     {
         Serial.println("Error");
